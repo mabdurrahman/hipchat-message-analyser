@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App start -->
+    <color name="app_color">#106FCD</color>
+    <color name="app_color_dark">#0E57A3</color>
+    <color name="app_color_accent">#9CBD2E</color>
+    <!-- App end -->
+
+    <!-- Static start -->
+    <color name="BLACK">#000000</color>
+    <color name="WHITE">#FFFFFFFF</color>
+    <color name="TRANS">#00000000</color>
+
+    <color name="LIGHT_GRAY">#FFEBEBEB</color>
+    <color name="GRAY">#FFCDCDCD</color>
+    <color name="DARK_GRAY">#5E5E5E</color>
+    <!-- Static end -->
+
+    <!-- Text Colors start -->
+    <color name="primary_text">@color/BLACK</color>
+    <color name="primary_text_inverse">@color/WHITE</color>
+
+    <color name="secondary_text">@color/DARK_GRAY</color>
+    <color name="secondary_text_inverse">@color/LIGHT_GRAY</color>
+
+    <color name="tertiary_text">@color/app_color_dark</color>
+    <color name="tertiary_text_inverse">@color/WHITE</color>
+    <!-- Text Colors end -->
+
+    <!-- Default Button start -->
+    <color name="btn_default_normal">@color/app_color</color>
+    <color name="btn_default_focused">@color/app_color_dark</color>
+    <color name="btn_default_pressed">@color/app_color_dark</color>
+    <!-- Default Button end -->
+
+    <!-- Default EditText start -->
+    <color name="edittext_default_normal">@color/WHITE</color>
+    <color name="edittext_default_disabled">@color/DARK_GRAY</color>
+    <color name="edittext_default_selected">@color/LIGHT_GRAY</color>
+    <!-- Default EditText end -->
+
+</resources>

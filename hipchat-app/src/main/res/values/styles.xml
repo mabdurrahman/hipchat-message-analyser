@@ -1,0 +1,93 @@
+<resources>
+
+    <style name="AppTheme" parent="@style/AppBaseTheme" />
+
+    <!-- Base application theme. -->
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        
+        <item name="android:windowBackground">@color/WHITE</item>
+
+        <!-- AppCompat Material Attrs -->
+        <!--   branding color for the app bar -->
+        <item name="colorPrimary">@color/app_color</item>
+        <!--   darker variant for the status bar and contextual app bars -->
+        <item name="colorPrimaryDark">@color/app_color_dark</item>
+        <!--   theme UI controls like checkboxes and text fields -->
+        <item name="colorAccent">@color/app_color_accent</item>
+
+        <item name="android:textColorPrimary">@color/primary_text</item>
+        <item name="android:textColorSecondary">@color/secondary_text</item>
+        <item name="android:textColorTertiary">@color/tertiary_text</item>
+        <item name="android:textColorPrimaryInverse">@color/primary_text_inverse</item>
+        <item name="android:textColorSecondaryInverse">@color/secondary_text_inverse</item>
+        <item name="android:textColorTertiaryInverse">@color/tertiary_text_inverse</item>
+
+        <item name="android:textAppearanceSmall">@style/AppTextAppearance.Small</item>
+        <item name="android:textAppearanceMedium">@style/AppTextAppearance.Medium</item>
+        <item name="android:textAppearanceLarge">@style/AppTextAppearance.Large</item>
+
+        <item name="android:buttonStyle">@style/AppTheme.ButtonStyle</item>
+        <item name="android:imageButtonStyle">@style/AppTheme.ButtonStyle.Transparent</item>
+        <item name="android:textViewStyle">@style/AppTheme.TextViewStyle</item>
+        <item name="android:editTextStyle">@style/AppTheme.EditTextStyle</item>
+
+    </style>
+
+    <style name="AppTheme.NoToolbar" parent="@style/AppBaseTheme">
+        <!-- No Action Bar Attrs -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.ToolbarStyle" parent="">
+        <item name="elevation">@dimen/toolbar_elevation</item>
+
+        <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+
+        <item name="titleTextAppearance">@style/AppTheme.ToolbarStyle.TitleTextAppearance</item>
+        <item name="subtitleTextAppearance">@style/AppTheme.ToolbarStyle.SubtitleTextAppearance</item>
+    </style>
+
+    <style name="AppTheme.ToolbarStyle.TitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="AppTheme.ToolbarStyle.SubtitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="AppTextAppearance.Small" parent="android:TextAppearance.Small">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="AppTextAppearance.Medium" parent="android:TextAppearance.Medium">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="AppTextAppearance.Large" parent="android:TextAppearance.Large">
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="AppTheme.ButtonStyle" parent="android:Widget.Button">
+        <item name="android:background">@drawable/btn_default</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMediumInverse</item>
+        <item name="android:textColor">@color/txt_button</item>
+    </style>
+
+    <style name="AppTheme.ButtonStyle.Transparent" parent="AppTheme.ButtonStyle">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="AppTheme.TextViewStyle" parent="android:Widget.TextView">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
+    <style name="AppTheme.EditTextStyle" parent="android:Widget.EditText">
+        <item name="android:background">@drawable/edittext_default</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMediumInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textColorHint">@color/DARK_GRAY</item>
+    </style>
+
+</resources>

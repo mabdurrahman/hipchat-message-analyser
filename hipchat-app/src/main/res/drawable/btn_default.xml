@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- pressed state -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/view_corner" />
+            <solid android:color="@color/btn_default_pressed" />
+            <padding android:bottom="@dimen/button_vertical_padding"
+                android:left="@dimen/button_horizontal_padding"
+                android:right="@dimen/button_horizontal_padding"
+                android:top="@dimen/button_vertical_padding" />
+        </shape>
+    </item>
+
+    <!-- focused state -->
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/view_corner" />
+            <solid android:color="@color/btn_default_focused" />
+            <padding android:bottom="@dimen/button_vertical_padding"
+                android:left="@dimen/button_horizontal_padding"
+                android:right="@dimen/button_horizontal_padding"
+                android:top="@dimen/button_vertical_padding" />
+        </shape>
+    </item>
+
+    <!-- normal state -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/view_corner" />
+            <solid android:color="@color/btn_default_normal" />
+            <padding android:bottom="@dimen/button_vertical_padding"
+                android:left="@dimen/button_horizontal_padding"
+                android:right="@dimen/button_horizontal_padding"
+                android:top="@dimen/button_vertical_padding" />
+        </shape>
+    </item>
+</selector>

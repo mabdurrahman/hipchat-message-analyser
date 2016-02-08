@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/DARK_GRAY">
+    <item>
+        <selector>
+            <item android:state_enabled="false">
+                <shape android:shape="rectangle">
+                    <corners android:radius="@dimen/view_corner" />
+                    <solid android:color="@color/edittext_default_disabled" />
+                    <padding android:left="@dimen/edittext_horizontal_padding"
+                        android:top="@dimen/edittext_vertical_padding"
+                        android:right="@dimen/edittext_horizontal_padding"
+                        android:bottom="@dimen/edittext_vertical_padding" />
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="@dimen/view_corner" />
+                    <solid android:color="@color/edittext_default_normal" />
+                    <padding android:left="@dimen/edittext_horizontal_padding"
+                        android:top="@dimen/edittext_vertical_padding"
+                        android:right="@dimen/edittext_horizontal_padding"
+                        android:bottom="@dimen/edittext_vertical_padding" />
+                </shape>
+            </item>
+        </selector>
+    </item>
+    <item android:id="@+id/mask">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/view_corner" />
+            <solid android:color="@color/edittext_default_selected" />
+            <padding android:left="@dimen/edittext_horizontal_padding"
+                android:top="@dimen/edittext_vertical_padding"
+                android:right="@dimen/edittext_horizontal_padding"
+                android:bottom="@dimen/edittext_vertical_padding" />
+        </shape>
+    </item>
+</ripple>

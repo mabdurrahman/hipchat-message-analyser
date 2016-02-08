@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">HipChat Analyser</string>
+
+    <!-- EditTexts Hints -->
+    <string name="edit_name">Name</string>
+    <string name="edit_email">Email</string>
+
+    <!-- Buttons Strings -->
+    <string name="btn_done">DONE</string>
+</resources>

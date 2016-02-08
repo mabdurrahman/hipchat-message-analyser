@@ -1,0 +1,55 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- Default corner radius for Views -->
+    <dimen name="view_corner">2dp</dimen>
+
+    <!-- Toolbar elevation -->
+    <dimen name="toolbar_elevation">4dp</dimen>
+
+    <!-- Default outer margins for Views, per the Android Design guidelines -->
+    <dimen name="view_horizontal_margin_narrow">4dp</dimen>
+    <dimen name="view_vertical_margin_narrow">4dp</dimen>
+
+    <dimen name="view_horizontal_margin_default">8dp</dimen>
+    <dimen name="view_vertical_margin_default">8dp</dimen>
+
+    <dimen name="view_horizontal_margin_double">16dp</dimen>
+    <dimen name="view_vertical_margin_double">16dp</dimen>
+
+    <dimen name="view_horizontal_margin_long">32dp</dimen>
+    <dimen name="view_vertical_margin_long">32dp</dimen>
+
+    <dimen name="view_horizontal_margin_xlong">64dp</dimen>
+    <dimen name="view_vertical_margin_xlong">64dp</dimen>
+
+    <!-- Default inner padding within Views, per the Android Design guidelines -->
+    <dimen name="view_vertical_padding_narrow">2dp</dimen>
+    <dimen name="view_horizontal_padding_narrow">2dp</dimen>
+
+    <dimen name="view_vertical_padding_default">4dp</dimen>
+    <dimen name="view_horizontal_padding_default">4dp</dimen>
+
+    <dimen name="view_vertical_padding_double">8dp</dimen>
+    <dimen name="view_horizontal_padding_double">8dp</dimen>
+
+    <dimen name="view_vertical_padding_long">16dp</dimen>
+    <dimen name="view_horizontal_padding_long">16dp</dimen>
+
+    <dimen name="view_vertical_padding_xlong">32dp</dimen>
+    <dimen name="view_horizontal_padding_xlong">32dp</dimen>
+
+    <dimen name="view_vertical_padding_xxlong">64dp</dimen>
+    <dimen name="view_horizontal_padding_xxlong">64dp</dimen>
+
+    <!-- Default inner padding within Buttons -->
+    <dimen name="button_vertical_padding">@dimen/view_vertical_padding_double</dimen>
+    <dimen name="button_horizontal_padding">@dimen/view_horizontal_padding_default</dimen>
+
+    <!-- Default inner padding within EditTexts -->
+    <dimen name="edittext_vertical_padding">@dimen/view_vertical_padding_double</dimen>
+    <dimen name="edittext_horizontal_padding">@dimen/view_horizontal_padding_double</dimen>
+
+</resources>
