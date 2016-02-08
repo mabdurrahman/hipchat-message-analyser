@@ -4,7 +4,10 @@ import com.mabdurrahman.atlassian.exercise.model.ContentEntity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
 
 /**
  * Created by Mahmoud Abdurrahman (m.abdurrahman@startappz.com) on 2/8/16.
@@ -38,6 +41,7 @@ public class ContentAnalyser {
         entities.addAll(extractEmoticonsWithIndices(text));
         entities.addAll(extractURLsWithIndices(text));
 
+        removeOverlappingEntities(entities);
         return entities;
     }
 
@@ -48,8 +52,15 @@ public class ContentAnalyser {
      * @return List of mentions referenced (without the leading @ sign)
      */
     public List<String> extractMentions(String text) {
-        // TODO Implement the logic
-        return Collections.emptyList();
+        if (text == null || text.length() == 0) {
+            return Collections.emptyList();
+        }
+
+        List<String> extracted = new ArrayList<>();
+        for (ContentEntity entity : extractMentionsWithIndices(text)) {
+            extracted.add(entity.getValue());
+        }
+        return extracted;
     }
 
     /**
@@ -60,8 +71,34 @@ public class ContentAnalyser {
      *  about start index, end index, and value of the referenced mention (without the leading @ sign)
      */
     public List<ContentEntity> extractMentionsWithIndices(String text) {
-        // TODO Implement the logic
-        return Collections.emptyList();
+        if (text == null || text.length() == 0) {
+            return Collections.emptyList();
+        }
+
+        // Performance optimization.
+        // If text doesn't contain @ at all, the text doesn't
+        // contain @mention. So we can simply return an empty list.
+        boolean found = false;
+        for (char c : text.toCharArray()) {
+            if (c == '@') {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            return Collections.emptyList();
+        }
+
+        List<ContentEntity> extracted = new ArrayList<>();
+        Matcher matcher = ContentRegex.VALID_MENTION.matcher(text);
+        while (matcher.find()) {
+            if (matcher.group(ContentRegex.VALID_MENTION_GROUP_USERNAME) == null) {
+                continue;
+            }
+
+            extracted.add(new ContentEntity(matcher, ContentEntity.Type.MENTION, ContentRegex.VALID_MENTION_GROUP_USERNAME));
+        }
+        return extracted;
     }
 
     /**
@@ -71,8 +108,15 @@ public class ContentAnalyser {
      * @return List of emoticons referenced (without the wrapping () parentheses)
      */
     public List<String> extractEmoticons(String text) {
-        // TODO Implement the logic
-        return Collections.emptyList();
+        if (text == null || text.length() == 0) {
+            return Collections.emptyList();
+        }
+
+        List<String> extracted = new ArrayList<>();
+        for (ContentEntity entity : extractEmoticonsWithIndices(text)) {
+            extracted.add(entity.getValue());
+        }
+        return extracted;
     }
 
     /**
@@ -83,8 +127,33 @@ public class ContentAnalyser {
      *  about start index, end index, and value of the referenced emoticon (without the wrapping () parentheses)
      */
     public List<ContentEntity> extractEmoticonsWithIndices(String text) {
-        // TODO Implement the logic
-        return Collections.emptyList();
+        if (text == null || text.length() == 0) {
+            return Collections.emptyList();
+        }
+
+        // Performance optimization.
+        // If text doesn't contain both ( and ) at all, the text doesn't
+        // contain (emoticon). So we can simply return an empty list.
+        boolean openingFound = false;
+        boolean closingFound = false;
+        for (char c : text.toCharArray()) {
+            if (c == '(') {
+                openingFound = true;
+            } else if (openingFound && c == ')') {
+                closingFound = true;
+                break;
+            }
+        }
+        if (!closingFound) {
+            return Collections.emptyList();
+        }
+
+        List<ContentEntity> extracted = new ArrayList<>();
+        Matcher matcher = ContentRegex.VALID_EMOTICON.matcher(text);
+        while (matcher.find()) {
+            extracted.add(new ContentEntity(matcher, ContentEntity.Type.EMOTICON, ContentRegex.VALID_EMOTICON_GROUP_VALUE));
+        }
+        return extracted;
     }
 
     /**
@@ -94,8 +163,15 @@ public class ContentAnalyser {
      * @return List of URLs referenced.
      */
     public List<String> extractURLs(String text) {
-        // TODO Implement the logic
-        return Collections.emptyList();
+        if (text == null || text.length() == 0) {
+            return Collections.emptyList();
+        }
+
+        List<String> urls = new ArrayList<>();
+        for (ContentEntity entity : extractURLsWithIndices(text)) {
+            urls.add(entity.getValue());
+        }
+        return urls;
     }
 
     /**
@@ -106,7 +182,57 @@ public class ContentAnalyser {
      *  about start index, end index, and value of the referenced URL
      */
     public List<ContentEntity> extractURLsWithIndices(String text) {
-        // TODO Implement the logic
-        return Collections.emptyList();
+        if (text == null || text.length() == 0 || text.indexOf('.') == -1) {
+            // Performance optimization.
+            // If text doesn't contain '.' or ':' at all, text doesn't contain URL,
+            // so we can simply return an empty list.
+            return Collections.emptyList();
+        }
+
+        List<ContentEntity> urls = new ArrayList<>();
+
+        Matcher matcher = ContentRegex.VALID_URL.matcher(text);
+        while (matcher.find()) {
+            if (matcher.group(ContentRegex.VALID_URL_GROUP_PROTOCOL) == null) {
+                // skip if URL is preceded by invalid character.
+                if (ContentRegex.INVALID_URL_WITHOUT_PROTOCOL_MATCH_BEGIN
+                        .matcher(matcher.group(ContentRegex.VALID_URL_GROUP_BEFORE)).matches()) {
+                    continue;
+                }
+            }
+            String url = matcher.group(ContentRegex.VALID_URL_GROUP_URL);
+            int start = matcher.start(ContentRegex.VALID_URL_GROUP_URL);
+            int end = matcher.end(ContentRegex.VALID_URL_GROUP_URL);
+
+            urls.add(new ContentEntity(start, end, url, ContentEntity.Type.URL));
+        }
+
+        return urls;
+    }
+
+    private void removeOverlappingEntities(List<ContentEntity> entities) {
+        // sort by index
+        Collections.<ContentEntity>sort(entities, new Comparator<ContentEntity>() {
+            public int compare(ContentEntity e1, ContentEntity e2) {
+                return e1.getStart() - e2.getStart();
+            }
+        });
+
+        // Remove overlapping entities.
+        // Two entities overlap only when one is URL and the other is mention/emoticon
+        // which is a part of the URL. When it happens, we choose URL over mention/emoticon
+        // by selecting the one with smaller start index.
+        if (!entities.isEmpty()) {
+            Iterator<ContentEntity> it = entities.iterator();
+            ContentEntity prev = it.next();
+            while (it.hasNext()) {
+                ContentEntity cur = it.next();
+                if (prev.getEnd() > cur.getStart()) {
+                    it.remove();
+                } else {
+                    prev = cur;
+                }
+            }
+        }
     }
 }

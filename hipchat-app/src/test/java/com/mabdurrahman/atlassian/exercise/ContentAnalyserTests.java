@@ -42,30 +42,35 @@ public class ContentAnalyserTests {
         @Test
         public void testMentionAtTheBeginning() throws Exception {
             List<String> extracted = analyser.extractMentions("@user mention");
+
             assertList("Failed to extract mention at the beginning", new String[]{"user"}, extracted);
         }
 
         @Test
         public void testMentionWithLeadingSpace() throws Exception {
             List<String> extracted = analyser.extractMentions(" @user mention");
+
             assertList("Failed to extract mention with leading space", new String[]{"user"}, extracted);
         }
 
         @Test
         public void testMentionInMidText() throws Exception {
             List<String> extracted = analyser.extractMentions("mention @user here");
+
             assertList("Failed to extract mention in mid text", new String[]{"user"}, extracted);
         }
 
         @Test
         public void testMultipleMentions() throws Exception {
             List<String> extracted = analyser.extractMentions("mention @user1 here and @user2 here");
+
             assertList("Failed to extract multiple mentioned users", new String[]{"user1", "user2"}, extracted);
         }
 
         @Test
         public void testInvalidMention() throws Exception {
             List<String> extracted = analyser.extractMentions("@ invalid mention.");
+
             assertEmptyList("Extracted an invalid mention: " + extracted, extracted);
         }
 
@@ -106,7 +111,7 @@ public class ContentAnalyserTests {
         public void testEmoticonInMidText() throws Exception {
             List<String> extracted = analyser.extractEmoticons("emoticon (smile) here");
 
-            assertList("Failed to extract emoticon in mid text", new String[]{"user"}, extracted);
+            assertList("Failed to extract emoticon in mid text", new String[]{"smile"}, extracted);
         }
 
         @Test
@@ -126,13 +131,14 @@ public class ContentAnalyserTests {
         @Test
         public void testEmoticonWithIndices() throws Exception {
             List<ContentEntity> extracted = analyser.extractEmoticonsWithIndices(" (smile) and (anger) and (sad) are all emoticons ");
+
             assertEquals(extracted.size(), 3);
             assertEquals(extracted.get(0).getStart(), 1);
-            assertEquals(extracted.get(0).getEnd(), 8);
+            assertEquals(extracted.get(0).getEnd(), 7);
             assertEquals(extracted.get(1).getStart(), 13);
-            assertEquals(extracted.get(1).getEnd(), 20);
+            assertEquals(extracted.get(1).getEnd(), 19);
             assertEquals(extracted.get(2).getStart(), 25);
-            assertEquals(extracted.get(2).getEnd(), 30);
+            assertEquals(extracted.get(2).getEnd(), 29);
         }
 
     }
@@ -223,7 +229,7 @@ public class ContentAnalyserTests {
         public void testMentionOverlappingEmoticon() throws Exception {
             List<String> extracted = analyser.extractEntities("Good morning! (@megusta) (@coffee)");
 
-            assertList("Extracted invalid emoticons: " + extracted, new String[]{"a", "applePearPeach"}, extracted);
+            assertList("Extracted invalid emoticons: " + extracted, new String[]{"megusta", "coffee"}, extracted);
         }
 
         @Test
