@@ -9,6 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import rx.Observable;
+import rx.functions.Func0;
+
 /**
  * Created by Mahmoud Abdurrahman (m.abdurrahman@startappz.com) on 2/8/16.
  */
@@ -16,7 +19,7 @@ public class ContentAnalyser {
 
     /**
      * Extract @mentions, {emoticons}, and URLs from a given message text.
-     * @param text text of tweet
+     * @param text text of message
      * @return list of extracted entities values
      */
     public List<String> extractEntities(String text) {
@@ -32,7 +35,21 @@ public class ContentAnalyser {
 
     /**
      * Extract @mentions, {emoticons}, and URLs from a given message text.
-     * @param text text of tweet
+     * @param text text of message
+     * @return an Observable that emits all entities extracted as a list
+     */
+    public Observable<List<String>> rxExtractEntities(final String text) {
+        return Observable.defer(new Func0<Observable<List<String>>>() {
+            @Override
+            public Observable<List<String>> call() {
+                return Observable.just(extractEntities(text));
+            }
+        });
+    }
+
+    /**
+     * Extract @mentions, {emoticons}, and URLs from a given message text.
+     * @param text text of message
      * @return list of extracted entities
      */
     public List<ContentEntity> extractEntitiesWithIndices(String text) {
@@ -43,6 +60,20 @@ public class ContentAnalyser {
 
         removeOverlappingEntities(entities);
         return entities;
+    }
+
+    /**
+     * Extract @mentions, {emoticons}, and URLs from a given message text.
+     * @param text text of message
+     * @return an Observable that emits all entities extracted as a list
+     */
+    public Observable<List<ContentEntity>> rxExtractEntitiesWithIndices(final String text) {
+        return Observable.defer(new Func0<Observable<List<ContentEntity>>>() {
+            @Override
+            public Observable<List<ContentEntity>> call() {
+                return Observable.just(extractEntitiesWithIndices(text));
+            }
+        });
     }
 
     /**
@@ -61,6 +92,21 @@ public class ContentAnalyser {
             extracted.add(entity.getValue());
         }
         return extracted;
+    }
+
+    /**
+     * Extract @mention references from a given text. A mention is an occurrence of @mention anywhere in a message text.
+     *
+     * @param text of the message from which to extract mentions
+     * @return an Observable that emits all mentions referenced (without the leading @ sign)
+     */
+    public Observable<List<String>> rxExtractMentions(final String text) {
+        return Observable.defer(new Func0<Observable<List<String>>>() {
+            @Override
+            public Observable<List<String>> call() {
+                return Observable.just(extractMentions(text));
+            }
+        });
     }
 
     /**
@@ -102,6 +148,23 @@ public class ContentAnalyser {
     }
 
     /**
+     * Extract @mention references from a given text. A mention is an occurrence of @mention anywhere in a message text.
+     *
+     * @param text of the message from which to extract mentions
+     * @return an Observable that emits {@link ContentEntity}(s) of type {@link ContentEntity.Type#MENTION},
+     *  having info about start index, end index, and value of the referenced mention (without the leading
+     *  @ sign)
+     */
+    public Observable<List<ContentEntity>> rxExtractMentionsWithIndices(final String text) {
+        return Observable.defer(new Func0<Observable<List<ContentEntity>>>() {
+            @Override
+            public Observable<List<ContentEntity>> call() {
+                return Observable.just(extractMentionsWithIndices(text));
+            }
+        });
+    }
+
+    /**
      * Extract (emoticons) references from a given text. An emoticon is an occurrence of (emoticon) anywhere in a message text.
      *
      * @param text of the message from which to extract emoticons
@@ -117,6 +180,21 @@ public class ContentAnalyser {
             extracted.add(entity.getValue());
         }
         return extracted;
+    }
+
+    /**
+     * Extract (emoticons) references from a given text. An emoticon is an occurrence of (emoticon) anywhere in a message text.
+     *
+     * @param text of the message from which to extract emoticons
+     * @return an Observable that emits all emoticons referenced (without the wrapping () parentheses)
+     */
+    public Observable<List<String>> rxExtractEmoticons(final String text) {
+        return Observable.defer(new Func0<Observable<List<String>>>() {
+            @Override
+            public Observable<List<String>> call() {
+                return Observable.just(extractEmoticons(text));
+            }
+        });
     }
 
     /**
@@ -157,6 +235,23 @@ public class ContentAnalyser {
     }
 
     /**
+     * Extract (emoticons) references from a given text. An emoticon is an occurrence of (emoticon) anywhere in a message text.
+     *
+     * @param text of the message from which to extract emoticons
+     * @return an Observable that emits {@link ContentEntity}(s) of type {@link ContentEntity.Type#EMOTICON},
+     *  having info about start index, end index, and value of the referenced emoticon (without the wrapping
+     *  () parentheses)
+     */
+    public Observable<List<ContentEntity>> rxExtractEmoticonsWithIndices(final String text) {
+        return Observable.defer(new Func0<Observable<List<ContentEntity>>>() {
+            @Override
+            public Observable<List<ContentEntity>> call() {
+                return Observable.just(extractEmoticonsWithIndices(text));
+            }
+        });
+    }
+
+    /**
      * Extract URL references from a given text.
      *
      * @param text of the message from which to extract URLs
@@ -172,6 +267,21 @@ public class ContentAnalyser {
             urls.add(entity.getValue());
         }
         return urls;
+    }
+
+    /**
+     * Extract URL references from a given text.
+     *
+     * @param text of the message from which to extract URLs
+     * @return an Observable that emits all URLs referenced.
+     */
+    public Observable<List<String>> rxExtractURLs(final String text) {
+        return Observable.defer(new Func0<Observable<List<String>>>() {
+            @Override
+            public Observable<List<String>> call() {
+                return Observable.just(extractURLs(text));
+            }
+        });
     }
 
     /**
@@ -208,6 +318,22 @@ public class ContentAnalyser {
         }
 
         return urls;
+    }
+
+    /**
+     * Extract URL references from a given text.
+     *
+     * @param text of the message from which to extract URLs
+     * @return an Observable that emits {@link ContentEntity}(s) of type {@link ContentEntity.Type#URL},
+     *  having info about start index, end index, and value of the referenced URL
+     */
+    public Observable<List<ContentEntity>> rxExtractURLsWithIndices(final String text) {
+        return Observable.defer(new Func0<Observable<List<ContentEntity>>>() {
+            @Override
+            public Observable<List<ContentEntity>> call() {
+                return Observable.just(extractURLsWithIndices(text));
+            }
+        });
     }
 
     private void removeOverlappingEntities(List<ContentEntity> entities) {
