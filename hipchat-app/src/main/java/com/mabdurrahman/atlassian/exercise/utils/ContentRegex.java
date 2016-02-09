@@ -33,6 +33,7 @@ public class ContentRegex {
             "\\u3000" +             // White_Space # Zs       IDEOGRAPHIC SPACE
             "]";
 
+    private static final String CYRILLIC_CHARS = "\\u0400-\\u04FF"; // Cyrillic
     private static final String LATIN_ACCENTS_CHARS = "\\u00c0-\\u00d6\\u00d8-\\u00f6\\u00f8-\\u00ff" + // Latin-1
             "\\u0100-\\u024f" + // Latin Extended A and B
             "\\u0253\\u0254\\u0256\\u0257\\u0259\\u025b\\u0263\\u0268\\u026f\\u0272\\u0289\\u028b" + // IPA Extensions
@@ -53,78 +54,85 @@ public class ContentRegex {
 
     private static final String URL_VALID_DOMAIN =
             "(?:" +                                                   // subdomains + domain + TLD
-                    URL_VALID_SUBDOMAIN + "+" + URL_VALID_DOMAIN_NAME +   // e.g. www.twitter.com, foo.co.jp, bar.co.uk
-                    "(?:" + URL_VALID_GTLD + "|" + URL_VALID_CCTLD + "|" + URL_PUNYCODE + ")" +
-                    ")" +
-                    "|(?:" +                                                  // domain + gTLD + some ccTLD
-                    URL_VALID_DOMAIN_NAME +                                 // e.g. twitter.com
-                    "(?:" + URL_VALID_GTLD + "|" + URL_PUNYCODE + "|" + SPECIAL_URL_VALID_CCTLD + ")" +
-                    ")" +
-                    "|(?:" + "(?<=https?://)" +
-                    "(?:" +
+                URL_VALID_SUBDOMAIN + "+" + URL_VALID_DOMAIN_NAME +   // e.g. www.twitter.com, foo.co.jp, bar.co.uk
+                "(?:" + URL_VALID_GTLD + "|" + URL_VALID_CCTLD + "|" + URL_PUNYCODE + ")" +
+            ")" +
+            "|(?:" +                                                  // domain + gTLD + some ccTLD
+                URL_VALID_DOMAIN_NAME +                                 // e.g. twitter.com
+                "(?:" + URL_VALID_GTLD + "|" + URL_PUNYCODE + "|" + SPECIAL_URL_VALID_CCTLD + ")" +
+            ")" +
+            "|(?:" + "(?<=https?://)" +
+                "(?:" +
                     "(?:" + URL_VALID_DOMAIN_NAME + URL_VALID_CCTLD + ")" +  // protocol + domain + ccTLD
                     "|(?:" +
-                    URL_VALID_UNICODE_CHARS + "+\\." +                     // protocol + unicode domain + TLD
-                    "(?:" + URL_VALID_GTLD + "|" + URL_VALID_CCTLD + ")" +
+                        URL_VALID_UNICODE_CHARS + "+\\." +                     // protocol + unicode domain + TLD
+                        "(?:" + URL_VALID_GTLD + "|" + URL_VALID_CCTLD + ")" +
                     ")" +
-                    ")" +
-                    ")" +
-                    "|(?:" +                                                  // domain + ccTLD + '/'
-                    URL_VALID_DOMAIN_NAME + URL_VALID_CCTLD + "(?=/)" +     // e.g. t.co/
-                    ")";
+                ")" +
+            ")" +
+            "|(?:" +                                                  // domain + ccTLD + '/'
+                URL_VALID_DOMAIN_NAME + URL_VALID_CCTLD + "(?=/)" +     // e.g. t.co/
+            ")";
 
     private static final String URL_VALID_PORT_NUMBER = "[0-9]++";
 
-    private static final String URL_VALID_GENERAL_PATH_CHARS = "[a-z\\p{IsCyrillic}0-9!\\*';:=\\+,.\\$/%#\\[\\]\\-_~\\|&@" + LATIN_ACCENTS_CHARS + "]";
+    private static final String URL_VALID_GENERAL_PATH_CHARS = "[a-z" + CYRILLIC_CHARS + "0-9!\\*';:=\\+,.\\$/%#\\[\\]\\-_~\\|&@" + LATIN_ACCENTS_CHARS + "]";
     /** Allow URL paths to contain up to two nested levels of balanced parentheses
      *  1. Used in Wikipedia URLs like /Primer_(film)
      *  2. Used in IIS sessions like /S(dfd346)/
      *  3. Used in Rdio URLs like /track/We_Up_(Album_Version_(Edited))/
      **/
-    private static final String URL_BALANCED_PARENS = "\\(" +
-            "(?:" +
-            URL_VALID_GENERAL_PATH_CHARS + "+" +
-            "|" +
-            // allow one nested level of balanced parentheses
-            "(?:" +
-            URL_VALID_GENERAL_PATH_CHARS + "*" +
+    private static final String URL_BALANCED_PARENS =
             "\\(" +
-            URL_VALID_GENERAL_PATH_CHARS + "+" +
-            "\\)" +
-            URL_VALID_GENERAL_PATH_CHARS + "*" +
-            ")" +
-            ")" +
+                "(?:" +
+                    URL_VALID_GENERAL_PATH_CHARS + "+" +
+                    "|" +
+                    // allow one nested level of balanced parentheses
+                    "(?:" +
+                        URL_VALID_GENERAL_PATH_CHARS + "*" +
+                        "\\(" +
+                            URL_VALID_GENERAL_PATH_CHARS + "+" +
+                        "\\)" +
+                        URL_VALID_GENERAL_PATH_CHARS + "*" +
+                    ")" +
+                ")" +
             "\\)";
 
     /** Valid end-of-path characters (so /foo. does not gobble the period).
      *   2. Allow =&# for empty URL parameters and other URL-join artifacts
      **/
-    private static final String URL_VALID_PATH_ENDING_CHARS = "[a-z\\p{IsCyrillic}0-9=_#/\\-\\+" + LATIN_ACCENTS_CHARS + "]|(?:" + URL_BALANCED_PARENS + ")";
+    private static final String URL_VALID_PATH_ENDING_CHARS = "[a-z" + CYRILLIC_CHARS + "0-9=_#/\\-\\+" + LATIN_ACCENTS_CHARS + "]|(?:" + URL_BALANCED_PARENS + ")";
 
-    private static final String URL_VALID_PATH = "(?:" +
+    private static final String URL_VALID_PATH =
             "(?:" +
-            URL_VALID_GENERAL_PATH_CHARS + "*" +
-            "(?:" + URL_BALANCED_PARENS + URL_VALID_GENERAL_PATH_CHARS + "*)*" +
-            URL_VALID_PATH_ENDING_CHARS +
-            ")|(?:@" + URL_VALID_GENERAL_PATH_CHARS + "+/)" +
+                "(?:" +
+                    URL_VALID_GENERAL_PATH_CHARS + "*" +
+                    "(?:" + URL_BALANCED_PARENS + URL_VALID_GENERAL_PATH_CHARS + "*)*" +
+                    URL_VALID_PATH_ENDING_CHARS +
+                ")" +
+                "|" +
+                "(?:@" +
+                    URL_VALID_GENERAL_PATH_CHARS +
+                "+)" +
             ")";
 
     private static final String URL_VALID_URL_QUERY_CHARS = "[a-z0-9!?\\*'\\(\\);:&=\\+\\$/%#\\[\\]\\-_\\.,~\\|@]";
     private static final String URL_VALID_URL_QUERY_ENDING_CHARS = "[a-z0-9_&=#/]";
+
     private static final String VALID_URL_PATTERN_STRING =
             "(" +                                                            //  $1 total match
-                    "(" + URL_VALID_PRECEEDING_CHARS + ")" +                       //  $2 Preceeding chracter
-                    "(" +                                                          //  $3 URL
+                "(" + URL_VALID_PRECEEDING_CHARS + ")" +                       //  $2 Preceeding chracter
+                "(" +                                                          //  $3 URL
                     "(https?://)?" +                                             //  $4 Protocol (optional)
                     "(" + URL_VALID_DOMAIN + ")" +                               //  $5 Domain(s)
                     "(?::(" + URL_VALID_PORT_NUMBER + "))?" +                     //  $6 Port number (optional)
                     "(/" +
-                    URL_VALID_PATH + "*+" +
-                    ")?" +                                                       //  $7 URL Path and anchor
+                        URL_VALID_PATH + "*+" +
+                    ")?" +                                                      //  $7 URL Path and anchor
                     "(\\?" + URL_VALID_URL_QUERY_CHARS + "*" +                   //  $8 Query String
-                    URL_VALID_URL_QUERY_ENDING_CHARS + ")?" +
-                    ")" +
-                    ")";
+                        URL_VALID_URL_QUERY_ENDING_CHARS + ")?" +
+                ")" +
+            ")";
 
     private static final String AT_SIGNS_CHARS = "@";
 
