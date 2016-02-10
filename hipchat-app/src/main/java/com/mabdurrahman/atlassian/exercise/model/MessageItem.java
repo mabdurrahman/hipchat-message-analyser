@@ -9,6 +9,7 @@ import java.util.List;
  */
 public class MessageItem extends BaseObject {
 
+    private static final long serialVersionUID = 2401554129441836178L;
     @JsonProperty
     private List<String> mentions;
 

@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ApiURLTitle extends BaseObject {
 
+    private static final long serialVersionUID = 533355664202610017L;
+
     @JsonProperty
     private ApiStatus status;
 

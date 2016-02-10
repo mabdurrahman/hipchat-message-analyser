@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class LinkItem extends BaseObject {
 
+    private static final long serialVersionUID = -6499054337757407445L;
+
     @JsonProperty
     private String url;
 
