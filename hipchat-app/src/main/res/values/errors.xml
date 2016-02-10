@@ -1,0 +1,7 @@
+<resources>
+
+    <!-- Validation Errors -->
+    <string name="error_required">This field is required</string>
+    <string name="error_name_required">Gotta know your name</string>
+
+</resources>

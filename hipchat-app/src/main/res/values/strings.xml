@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name">HipChat Analyser</string>
 
+    <!-- Label Strings -->
+    <string name="label_welcome">Welcome to <b>HipChat</b> Message Analyser.\n\nLet me first introduce my self, I\'m the magician behind <b>HipChat</b> app, I can help you analyse your chat messages.\n\n<b>Can you help me getting your name?</b></string>
+
     <!-- EditTexts Hints -->
     <string name="edit_name">Name</string>
     <string name="edit_email">Email</string>
 
     <!-- Buttons Strings -->
     <string name="btn_done">DONE</string>
+    <string name="btn_start">LET\'S START</string>
 </resources>
