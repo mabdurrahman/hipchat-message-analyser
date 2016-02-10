@@ -27,6 +27,12 @@
     <color name="tertiary_text_inverse">@color/WHITE</color>
     <!-- Text Colors end -->
 
+    <!-- Entities Span Colors start -->
+    <color name="mention_span_color">#2D76A9</color>
+    <color name="emoticon_span_color">#F69232</color>
+    <color name="url_span_color">#9CBD2E</color>
+    <!-- Entities Span Colors end -->
+
     <!-- Default Button start -->
     <color name="btn_default_normal">@color/app_color</color>
     <color name="btn_default_focused">@color/app_color_dark</color>

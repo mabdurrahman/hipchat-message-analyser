@@ -1,5 +1,6 @@
 package com.mabdurrahman.atlassian.exercise.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 
@@ -48,7 +49,10 @@ public class MainActivity extends BasicActivity {
     }
 
     private void startNextScreen(String name) {
-        // TODO Implement ChatActivity
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra(ChatActivity.EXTRA_USERNAME, name);
+        intent.putExtra(ChatActivity.EXTRA_FOCUS_MESSAGE_EDIT, false);
+        startActivity(intent);
     }
 
 }

@@ -1,7 +1,9 @@
 package com.mabdurrahman.atlassian.exercise.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -10,6 +12,10 @@ import java.util.List;
 public class MessageItem extends BaseObject {
 
     private static final long serialVersionUID = 2401554129441836178L;
+
+    @JsonIgnore
+    private String rawMessage;
+
     @JsonProperty
     private List<String> mentions;
 
@@ -19,8 +25,19 @@ public class MessageItem extends BaseObject {
     @JsonProperty
     private List<LinkItem> links;
 
+    @JsonIgnore
+    private List<ContentEntity> allEntities;
+
     public MessageItem() {
 
+    }
+
+    public String getRawMessage() {
+        return rawMessage;
+    }
+
+    public void setRawMessage(String rawMessage) {
+        this.rawMessage = rawMessage;
     }
 
     public List<String> getMentions() {
@@ -28,6 +45,8 @@ public class MessageItem extends BaseObject {
     }
 
     public void setMentions(List<String> mentions) {
+        if (mentions == null || mentions.isEmpty()) return;
+
         this.mentions = mentions;
     }
 
@@ -36,6 +55,8 @@ public class MessageItem extends BaseObject {
     }
 
     public void setEmoticons(List<String> emoticons) {
+        if (emoticons == null || emoticons.isEmpty()) return;
+
         this.emoticons = emoticons;
     }
 
@@ -44,6 +65,19 @@ public class MessageItem extends BaseObject {
     }
 
     public void setLinks(List<LinkItem> links) {
+        if (links == null || links.isEmpty()) return;
+
         this.links = links;
+    }
+
+    public List<ContentEntity> getAllEntities() {
+        if (allEntities == null) {
+            allEntities = Collections.emptyList();
+        }
+        return allEntities;
+    }
+
+    public void setAllEntities(List<ContentEntity> allEntities) {
+        this.allEntities = allEntities;
     }
 }

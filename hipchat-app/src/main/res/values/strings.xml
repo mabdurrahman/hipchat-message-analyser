@@ -1,12 +1,19 @@
 <resources>
     <string name="app_name">HipChat Analyser</string>
 
+    <!-- Title Strings -->
+    <string name="title_chat_room">Chat Room</string>
+
     <!-- Label Strings -->
     <string name="label_welcome">Welcome to <b>HipChat</b> Message Analyser.\n\nLet me first introduce my self, I\'m the magician behind <b>HipChat</b> app, I can help you analyse your chat messages.\n\n<b>Can you help me getting your name?</b></string>
+    <string name="label_welcome_message">Hi &lt;b&gt;%s&lt;/b&gt;, Welcome to &lt;b&gt;HipChat&lt;/b&gt; Message Analyser&#8230;&lt;br /&gt;&lt;br /&gt;Let\'s have a deal, &lt;b&gt;first&lt;/b&gt; you send me a message and I promise to analyse its content the best I can, &lt;b&gt;then&lt;/b&gt; I will reply with all my findings as soon as I finish.&lt;br /&gt;&lt;br /&gt;If there\'re findings I will reply with a JSON object plus a nicely formatted message, otherwise, I will reply only with an empty JSON.&lt;br /&gt;&lt;br /&gt;I will be waiting for your messages ;)</string>
 
     <!-- EditTexts Hints -->
     <string name="edit_name">Name</string>
-    <string name="edit_email">Email</string>
+    <string name="edit_message">Type a message</string>
+
+    <!-- Messages Strings -->
+    <string name="msg_failed_processing_message">I didn\'t able to analyse your message, I\'m afraid :(</string>
 
     <!-- Buttons Strings -->
     <string name="btn_done">DONE</string>
