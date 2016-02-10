@@ -229,7 +229,11 @@ public class ContentAnalyser {
         List<ContentEntity> extracted = new ArrayList<>();
         Matcher matcher = ContentRegex.VALID_EMOTICON.matcher(text);
         while (matcher.find()) {
-            extracted.add(new ContentEntity(matcher, ContentEntity.Type.EMOTICON, ContentRegex.VALID_EMOTICON_GROUP_VALUE));
+            String emoticon = matcher.group(ContentRegex.VALID_EMOTICON_GROUP_VALUE);
+            int start = matcher.start(ContentRegex.VALID_EMOTICON_GROUP_LEFT_PAREN);
+            int end = matcher.end(ContentRegex.VALID_EMOTICON_GROUP_RIGHT_PAREN);
+
+            extracted.add(new ContentEntity(start, end, emoticon, ContentEntity.Type.EMOTICON));
         }
         return extracted;
     }

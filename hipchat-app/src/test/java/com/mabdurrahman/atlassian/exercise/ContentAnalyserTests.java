@@ -134,11 +134,11 @@ public class ContentAnalyserTests {
 
             assertEquals(extracted.size(), 3);
             assertEquals(extracted.get(0).getStart(), 1);
-            assertEquals(extracted.get(0).getEnd(), 7);
+            assertEquals(extracted.get(0).getEnd(), 8);
             assertEquals(extracted.get(1).getStart(), 13);
-            assertEquals(extracted.get(1).getEnd(), 19);
+            assertEquals(extracted.get(1).getEnd(), 20);
             assertEquals(extracted.get(2).getStart(), 25);
-            assertEquals(extracted.get(2).getEnd(), 29);
+            assertEquals(extracted.get(2).getEnd(), 30);
         }
 
     }
