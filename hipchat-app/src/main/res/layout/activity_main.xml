@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/view_vertical_margin_double"
-            android:inputType="textPersonName"
+            android:inputType="textPersonName|textCapWords"
             android:imeOptions="actionGo"
             android:hint="@string/edit_name"
             android:singleLine="true" />
