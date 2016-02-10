@@ -31,7 +31,7 @@ public class ContentAnalyserTests {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        analyser = new ContentAnalyser();
+        analyser = ContentAnalyser.getInstance();
     }
 
     /**

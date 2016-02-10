@@ -17,6 +17,19 @@ import rx.functions.Func0;
  */
 public class ContentAnalyser {
 
+    private static ContentAnalyser instance;
+
+    public static ContentAnalyser getInstance() {
+        if (instance == null) {
+            instance = new ContentAnalyser();
+        }
+        return instance;
+    }
+
+    private ContentAnalyser() {
+
+    }
+
     /**
      * Extract @mentions, {emoticons}, and URLs from a given message text.
      * @param text text of message
@@ -342,7 +355,7 @@ public class ContentAnalyser {
 
     private void removeOverlappingEntities(List<ContentEntity> entities) {
         // sort by index
-        Collections.<ContentEntity>sort(entities, new Comparator<ContentEntity>() {
+        Collections.sort(entities, new Comparator<ContentEntity>() {
             public int compare(ContentEntity e1, ContentEntity e2) {
                 return e1.getStart() - e2.getStart();
             }
