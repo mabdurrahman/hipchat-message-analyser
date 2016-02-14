@@ -11,6 +11,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -335,6 +336,8 @@ public class ChatActivity extends BasicActivity {
                             @Override
                             public void call(Throwable throwable) {
                                 addReplyRawMessage(null);
+
+                                Log.e(TAG, throwable.getMessage(), throwable);
                             }
                         });
     }

@@ -115,7 +115,7 @@ public class ChatActivityTests {
 
         // Check if a reply was added and contains a JSON text describing all the findings
         // ----------------------
-        onView(allOf(nthChildOf(withId(R.id.recycler), 1), hasDescendant(withText("{\"emoticons\":[\"success\"],\"links\":[{\"title\":\"Twitter\",\"url\":\"https://twitter.com/jdorfman/status/430511497475670016\"}],\"mentions\":[\"bob\",\"john\"]}")))).check(matches(isDisplayed()));
+        onView(allOf(nthChildOf(withId(R.id.recycler), 1), hasDescendant(withText("{\"emoticons\":[\"success\"],\"links\":[{\"title\":\"Justin Dorfman on Twitter: \\\"nice @littlebigdetail from @HipChat (shows hex colors when pasted in chat). http://t.co/7cI6Gjy5pq\\\"\",\"url\":\"https://twitter.com/jdorfman/status/430511497475670016\"}],\"mentions\":[\"bob\",\"john\"]}")))).check(matches(isDisplayed()));
 
         // Moreover, check if a reply with the same original Message is added, and expected to be formatted
         // TODO: Check if the Message were properly formatted as expected

@@ -1,8 +1,10 @@
 package com.mabdurrahman.atlassian.exercise.api;
 
-import com.mabdurrahman.atlassian.exercise.model.ApiStatus;
-import com.mabdurrahman.atlassian.exercise.model.ApiURLTitle;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mabdurrahman.atlassian.exercise.model.LinkItem;
+import com.mabdurrahman.atlassian.exercise.model.YahooYqlResponse;
+import com.mabdurrahman.atlassian.exercise.utils.YahooYqlUtils;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
@@ -17,52 +19,60 @@ import rx.functions.Func1;
  */
 public class RestDataSource {
 
-    private final AlchemyApi endpoint;
+    private final YahooYqlApi endpoint;
 
     public RestDataSource() {
         OkHttpClient client = new OkHttpClient();
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         client.interceptors().add(httpLoggingInterceptor);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+
         endpoint = new Retrofit.Builder()
-                .baseUrl(AlchemyApi.BASE_URL)
+                .baseUrl(YahooYqlApi.BASE_URL)
                 .client(client)
-                .addConverterFactory(JacksonConverterFactory.create())
+                .addConverterFactory(JacksonConverterFactory.create(objectMapper))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build()
-                .create(AlchemyApi.class);
+                .create(YahooYqlApi.class);
     }
 
     public Observable<LinkItem> getURLTitle(String url) {
-        return endpoint.getURLTitle(url)
-                .onErrorReturn(new Func1<Throwable, ApiURLTitle>() {
+        return endpoint.getURLTitle(YahooYqlUtils.getHtmlTitleQuery(url))
+                .onErrorReturn(new Func1<Throwable, YahooYqlResponse>() {
                     @Override
-                    public ApiURLTitle call(Throwable throwable) {
-                        ApiURLTitle apiURLTitle = new ApiURLTitle();
-                        apiURLTitle.setStatus(ApiStatus.ERROR);
-                        apiURLTitle.setTitle("Can't extract title (" + throwable.getMessage() + ")");
+                    public YahooYqlResponse call(Throwable throwable) {
 
-                        return apiURLTitle;
+                        YahooYqlResponse response = new YahooYqlResponse();
+                        response.setCount(0);
+                        response.setTitleResult(new YahooYqlResponse.TitleResult("Can't extract title (" + throwable.getMessage() + ")"));
+
+                        return response;
                     }
                 })
-                .compose(new FromApiURLTitleToLinkItem(url));
+                .compose(new FromYqlResponseToLinkItem(url));
     }
 
-    public class FromApiURLTitleToLinkItem implements Observable.Transformer<ApiURLTitle, LinkItem> {
+    public class FromYqlResponseToLinkItem implements Observable.Transformer<YahooYqlResponse, LinkItem> {
 
         String extractedUrl;
 
-        public FromApiURLTitleToLinkItem(String extractedUrl) {
+        public FromYqlResponseToLinkItem(String extractedUrl) {
             this.extractedUrl = extractedUrl;
         }
 
         @Override
-        public Observable<LinkItem> call(Observable<ApiURLTitle> apiObservable) {
+        public Observable<LinkItem> call(Observable<YahooYqlResponse> apiObservable) {
             return apiObservable
-                    .map(new Func1<ApiURLTitle, LinkItem>() {
+                    .map(new Func1<YahooYqlResponse, LinkItem>() {
                         @Override
-                        public LinkItem call(ApiURLTitle apiURLTitle) {
-                            return new LinkItem(extractedUrl, apiURLTitle.getTitle());
+                        public LinkItem call(YahooYqlResponse yahooYqlResponse) {
+                            if (yahooYqlResponse.getCount() > 0 && yahooYqlResponse.getTitleResult() != null) {
+                                return new LinkItem(extractedUrl, yahooYqlResponse.getTitleResult().getTitle());
+                            }
+                            return new LinkItem(extractedUrl, "");
                         }
                     });
         }
