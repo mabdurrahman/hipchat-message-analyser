@@ -14,29 +14,25 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.mabdurrahman.atlassian.exercise.R;
 import com.mabdurrahman.atlassian.exercise.adapter.MessagesRecyclerAdapter;
-import com.mabdurrahman.atlassian.exercise.api.RestDataSource;
+import com.mabdurrahman.atlassian.exercise.manager.ChatManager;
 import com.mabdurrahman.atlassian.exercise.model.ChatMessageItem;
 import com.mabdurrahman.atlassian.exercise.model.ContentEntity;
-import com.mabdurrahman.atlassian.exercise.model.LinkItem;
 import com.mabdurrahman.atlassian.exercise.model.MessageItem;
-import com.mabdurrahman.atlassian.exercise.utils.ContentAnalyser;
 import com.mabdurrahman.atlassian.exercise.utils.InputUtils;
+import com.trello.rxlifecycle.ActivityEvent;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
 import icepick.State;
-import rx.Observable;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.functions.Func4;
 import rx.schedulers.Schedulers;
 
 /**
@@ -131,6 +127,9 @@ public class ChatActivity extends BasicActivity {
 
         username = getIntent().getStringExtra(EXTRA_USERNAME);
         focusMessageEdit = getIntent().getBooleanExtra(EXTRA_FOCUS_MESSAGE_EDIT, false);
+
+        //invalidate cache on fresh start
+        ChatManager.getInstance().invalidate();
     }
 
     @Override
@@ -139,6 +138,15 @@ public class ChatActivity extends BasicActivity {
 
         // Start the initial UI runnable
         updateHandler.post(updateRunnable);
+
+        // Subscribe to the Pending Request if any
+        if (ChatManager.getInstance().getMessageAnalyserRequestCache() != null) {
+            ChatManager.getInstance().getMessageAnalyserRequestCache()
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .compose(this.<MessageItem>bindUntilEvent(ActivityEvent.DESTROY))
+                    .subscribe(new AnalyseMessageSubscriber());
+        }
     }
 
     @Override
@@ -161,6 +169,12 @@ public class ChatActivity extends BasicActivity {
     protected void onSubmitCommentClick() {
         if (messageEditText.getText().toString().length() == 0 || messageEditText.getText().toString().trim().length() == 0) {
             messageEditText.requestFocus();
+            return;
+        }
+
+        // Don't process two simultaneous Messages at a time
+        if (ChatManager.getInstance().getMessageAnalyserRequestCache() != null) {
+            Toast.makeText(this, R.string.msg_cant_process_messages_simultaneously, Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -251,95 +265,11 @@ public class ChatActivity extends BasicActivity {
     private void analyseChatMessage() {
         final String messageText = messageEditText.getText().toString();
 
-        ContentAnalyser.getInstance().rxExtractEntitiesWithIndices(messageText)
-
-                .flatMap(new Func1<List<ContentEntity>, Observable<MessageItem>>() {
-                    @Override
-                    public Observable<MessageItem> call(List<ContentEntity> contentEntities) {
-
-                        Observable<ContentEntity> entitiesObservable = Observable.from(contentEntities);
-
-                        Observable<List<String>> mentionsObservable = entitiesObservable
-                                .filter(new Func1<ContentEntity, Boolean>() {
-                                    @Override
-                                    public Boolean call(ContentEntity contentEntity) {
-                                        return contentEntity.getType().equals(ContentEntity.Type.MENTION);
-                                    }
-                                })
-                                .map(new Func1<ContentEntity, String>() {
-                                    @Override
-                                    public String call(ContentEntity contentEntity) {
-                                        return contentEntity.getValue();
-                                    }
-                                }).toList();
-
-                        Observable<List<String>> emoticonsObservable = entitiesObservable
-                                .filter(new Func1<ContentEntity, Boolean>() {
-                                    @Override
-                                    public Boolean call(ContentEntity contentEntity) {
-                                        return contentEntity.getType().equals(ContentEntity.Type.EMOTICON);
-                                    }
-                                })
-                                .map(new Func1<ContentEntity, String>() {
-                                    @Override
-                                    public String call(ContentEntity contentEntity) {
-                                        return contentEntity.getValue();
-                                    }
-                                }).toList();
-
-                        Observable<List<LinkItem>> linksObservable = entitiesObservable
-                                .filter(new Func1<ContentEntity, Boolean>() {
-                                    @Override
-                                    public Boolean call(ContentEntity contentEntity) {
-                                        return contentEntity.getType().equals(ContentEntity.Type.URL);
-                                    }
-                                })
-                                .flatMap(new Func1<ContentEntity, Observable<LinkItem>>() {
-                                    @Override
-                                    public Observable<LinkItem> call(ContentEntity contentEntity) {
-                                        return new RestDataSource().getURLTitle(contentEntity.getValue());
-                                    }
-                                }).toList();
-
-                        // compose these together
-                        return Observable.zip(mentionsObservable,
-                                emoticonsObservable,
-                                linksObservable,
-                                Observable.just(contentEntities),
-                                new Func4<List<String>, List<String>, List<LinkItem>, List<ContentEntity>, MessageItem>() {
-                                    @Override
-                                    public MessageItem call(List<String> mentions, List<String> emoticons, List<LinkItem> linkItems, List<ContentEntity> contentEntities) {
-
-                                        MessageItem messageItem = new MessageItem();
-
-                                        messageItem.setRawMessage(messageText);
-                                        messageItem.setMentions(mentions);
-                                        messageItem.setEmoticons(emoticons);
-                                        messageItem.setLinks(linkItems);
-                                        messageItem.setAllEntities(contentEntities);
-
-                                        return messageItem;
-                                    }
-                                });
-                    }
-                })
+       ChatManager.getInstance().analyseChatMessage(messageText)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        new Action1<MessageItem>() {
-                            @Override
-                            public void call(MessageItem messageItem) {
-                                addReplyRawMessage(messageItem);
-                            }
-                        },
-                        new Action1<Throwable>() {
-                            @Override
-                            public void call(Throwable throwable) {
-                                addReplyRawMessage(null);
-
-                                Log.e(TAG, throwable.getMessage(), throwable);
-                            }
-                        });
+                .compose(this.<MessageItem>bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribe(new AnalyseMessageSubscriber());
     }
 
     @Override
@@ -361,6 +291,27 @@ public class ChatActivity extends BasicActivity {
 
             // Repeat this the same runnable code block again after UI_UPDATE_PERIOD
             updateHandler.postDelayed(updateRunnable, UI_UPDATE_PERIOD);
+        }
+
+    }
+
+    private class AnalyseMessageSubscriber extends Subscriber<MessageItem> {
+        @Override
+        public final void onNext(MessageItem messageItem) {
+            addReplyRawMessage(messageItem);
+
+            ChatManager.getInstance().invalidate();
+        }
+
+        @Override
+        public final void onError(Throwable throwable) {
+            addReplyRawMessage(null);
+
+            Log.e(TAG, throwable.getMessage(), throwable);
+        }
+
+        @Override
+        public final void onCompleted() {
         }
 
     }

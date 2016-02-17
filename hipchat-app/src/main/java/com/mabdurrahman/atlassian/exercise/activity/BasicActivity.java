@@ -2,12 +2,12 @@ package com.mabdurrahman.atlassian.exercise.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
 import com.mabdurrahman.atlassian.exercise.R;
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -16,7 +16,7 @@ import icepick.Icepick;
 /**
  * Created by Mahmoud Abdurrahman (m.abdurrahman@startappz.com) on 2/8/16.
  */
-public abstract class BasicActivity extends AppCompatActivity {
+public abstract class BasicActivity extends RxAppCompatActivity {
 
     @Nullable
     @Bind(R.id.toolbar_actionbar)

@@ -13,6 +13,7 @@
     <string name="edit_message">Type a message</string>
 
     <!-- Messages Strings -->
+    <string name="msg_cant_process_messages_simultaneously">Please be patient while I process your first message :)</string>
     <string name="msg_failed_processing_message">I didn\'t able to analyse your message, I\'m afraid :(</string>
 
     <!-- Buttons Strings -->

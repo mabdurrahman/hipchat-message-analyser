@@ -41,15 +41,15 @@ public class RestDataSource {
 
     public Observable<LinkItem> getURLTitle(String url) {
         return endpoint.getURLTitle(YahooYqlUtils.getHtmlTitleQuery(url))
-                .onErrorReturn(new Func1<Throwable, YahooYqlResponse>() {
+                .retry(3)
+                .onErrorResumeNext(new Func1<Throwable, Observable<YahooYqlResponse>>() {
                     @Override
-                    public YahooYqlResponse call(Throwable throwable) {
-
+                    public Observable<YahooYqlResponse> call(Throwable throwable) {
                         YahooYqlResponse response = new YahooYqlResponse();
                         response.setCount(0);
                         response.setTitleResult(new YahooYqlResponse.TitleResult("Can't extract title (" + throwable.getMessage() + ")"));
 
-                        return response;
+                        return Observable.just(response);
                     }
                 })
                 .compose(new FromYqlResponseToLinkItem(url));
@@ -69,10 +69,10 @@ public class RestDataSource {
                     .map(new Func1<YahooYqlResponse, LinkItem>() {
                         @Override
                         public LinkItem call(YahooYqlResponse yahooYqlResponse) {
-                            if (yahooYqlResponse.getCount() > 0 && yahooYqlResponse.getTitleResult() != null) {
-                                return new LinkItem(extractedUrl, yahooYqlResponse.getTitleResult().getTitle());
-                            }
-                            return new LinkItem(extractedUrl, "");
+                            if (yahooYqlResponse == null || yahooYqlResponse.getCount() == 0 || yahooYqlResponse.getTitleResult() == null)
+                                return new LinkItem(extractedUrl, "");
+
+                            return new LinkItem(extractedUrl, yahooYqlResponse.getTitleResult().getTitle());
                         }
                     });
         }

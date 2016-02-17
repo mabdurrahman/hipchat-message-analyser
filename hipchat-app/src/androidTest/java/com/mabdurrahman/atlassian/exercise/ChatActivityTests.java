@@ -16,6 +16,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.*;
 import static org.hamcrest.Matchers.*;
 
 import static com.mabdurrahman.atlassian.exercise.utils.CustomMatchers.*;
+import static com.mabdurrahman.atlassian.exercise.utils.OrientationChangeAction.*;
 import static com.mabdurrahman.atlassian.exercise.utils.WaitUtils.*;
 
 import org.junit.Rule;
@@ -108,6 +109,55 @@ public class ChatActivityTests {
         // Check if the user Message is added to Chat view
         // ----------------------
         onView(allOf(nthChildOf(withId(R.id.recycler), 0), hasDescendant(withText("@bob @john (success) such a cool feature; https://twitter.com/jdorfman/status/430511497475670016")))).check(matches(isDisplayed()));
+
+        // Now we wait some time
+        // ----------------------
+        waitTime();
+
+        // Check if a reply was added and contains a JSON text describing all the findings
+        // ----------------------
+        onView(allOf(nthChildOf(withId(R.id.recycler), 1), hasDescendant(withText("{\"emoticons\":[\"success\"],\"links\":[{\"title\":\"Justin Dorfman on Twitter: \\\"nice @littlebigdetail from @HipChat (shows hex colors when pasted in chat). http://t.co/7cI6Gjy5pq\\\"\",\"url\":\"https://twitter.com/jdorfman/status/430511497475670016\"}],\"mentions\":[\"bob\",\"john\"]}")))).check(matches(isDisplayed()));
+
+        // Moreover, check if a reply with the same original Message is added, and expected to be formatted
+        // TODO: Check if the Message were properly formatted as expected
+        // ----------------------
+        onView(allOf(nthChildOf(withId(R.id.recycler), 0), hasDescendant(withText("@bob @john (success) such a cool feature; https://twitter.com/jdorfman/status/430511497475670016")))).check(matches(isDisplayed()));
+
+        // Clean up
+        // ----------------------
+        cleanupWaitTime();
+    }
+
+    @Test
+    public void testMessageWithDefaultTextWithSwitchingToLandscape() {
+
+        // Start Activity with Custom Intent
+        // ----------------------
+        startActivityWithCustomIntent();
+
+        // Now we wait some time
+        // ----------------------
+        waitTime();
+
+        // Insure we're in Portrait mode
+        // ----------------------
+        onView(isRoot()).perform(orientationPortrait());
+
+        // Write a Message with different entities
+        // ----------------------
+        onView(withId(R.id.edit_message)).perform(typeText("@bob @john (success) such a cool feature; https://twitter.com/jdorfman/status/430511497475670016"));
+
+        // Tap "Submit" button to send Message
+        // ----------------------
+        onView(withId(R.id.btn_submit)).perform(click());
+
+        // Check if the user Message is added to Chat view
+        // ----------------------
+        onView(allOf(nthChildOf(withId(R.id.recycler), 0), hasDescendant(withText("@bob @john (success) such a cool feature; https://twitter.com/jdorfman/status/430511497475670016")))).check(matches(isDisplayed()));
+
+        // Switch to Landscape mode
+        // ----------------------
+        onView(isRoot()).perform(orientationLandscape());
 
         // Now we wait some time
         // ----------------------
